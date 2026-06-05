@@ -1,0 +1,8 @@
+{
+  "name": "Generador de calendario CLUBRV",
+  "description": "Herramienta avanzada de planificación de contenido y auditoría inteligente para Casino Club RV.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
