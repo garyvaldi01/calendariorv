@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Lock, Eye, EyeOff, AlertCircle, Sparkles, Upload, Camera, Trash2 } from 'lucide-react';
+import { Coins, Lock, Eye, EyeOff, AlertCircle, Sparkles, Upload, Camera, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface LoginProps {
@@ -13,6 +13,7 @@ export default function Login({ onLogin }: LoginProps) {
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [logo, setLogo] = useState<string | null>(null);
+  const [logoError, setLogoError] = useState(false);
   const [showLogoSettings, setShowLogoSettings] = useState(false);
   const logoInputRef = useRef<HTMLInputElement>(null);
 
@@ -52,6 +53,7 @@ export default function Login({ onLogin }: LoginProps) {
         if (event.target && typeof event.target.result === 'string') {
           localStorage.setItem('clubrv_logo', event.target.result);
           setLogo(event.target.result);
+          setLogoError(false);
           setShowLogoSettings(false);
         }
       };
@@ -65,6 +67,7 @@ export default function Login({ onLogin }: LoginProps) {
   const handleRemoveLogo = () => {
     localStorage.removeItem('clubrv_logo');
     setLogo(null);
+    setLogoError(false);
     setShowLogoSettings(false);
   };
 
@@ -127,12 +130,16 @@ export default function Login({ onLogin }: LoginProps) {
               className="relative size-20 rounded-full bg-gradient-to-br from-primary to-yellow-600 flex items-center justify-center mx-auto mb-4 shadow-[0_0_30px_rgba(212,175,55,0.3)] group cursor-pointer logo-settings-area"
               onClick={() => setShowLogoSettings(!showLogoSettings)}
             >
-              <img 
-                src={logo || "/logo.png"} 
-                alt="Logo Casino Club RV" 
-                className="size-full rounded-full object-cover" 
-                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-              />
+              {logoError ? (
+                <Coins className="size-9 text-black" />
+              ) : (
+                <img 
+                  src={logo || "/logo.png"} 
+                  alt="Logo Casino Club RV" 
+                  className="size-full rounded-full object-cover" 
+                  onError={() => setLogoError(true)}
+                />
+              )}
               <div className="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                 <Camera className="size-5 text-white" />
               </div>
