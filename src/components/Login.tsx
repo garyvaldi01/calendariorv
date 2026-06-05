@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Coins, Lock, Eye, EyeOff, AlertCircle, Sparkles } from 'lucide-react';
+import { Coins, Lock, Eye, EyeOff, AlertCircle, Sparkles, Upload, Camera, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface LoginProps {
@@ -12,6 +12,47 @@ export default function Login({ onLogin }: LoginProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [logo, setLogo] = useState<string | null>(null);
+  const [showLogoSettings, setShowLogoSettings] = useState(false);
+  const logoInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const savedLogo = localStorage.getItem('clubrv_logo');
+    if (savedLogo) {
+      setLogo(savedLogo);
+    }
+  }, []);
+
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      
+      // Validate file size (max 2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        setError('La imagen es demasiado grande. Máximo 2MB.');
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target && typeof event.target.result === 'string') {
+          localStorage.setItem('clubrv_logo', event.target.result);
+          setLogo(event.target.result);
+          setShowLogoSettings(false);
+        }
+      };
+      reader.onerror = () => {
+        setError('Error al leer el archivo. Intenta con otra imagen.');
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveLogo = () => {
+    localStorage.removeItem('clubrv_logo');
+    setLogo(null);
+    setShowLogoSettings(false);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,9 +110,17 @@ export default function Login({ onLogin }: LoginProps) {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-              className="size-16 rounded-full bg-gradient-to-br from-primary to-yellow-600 flex items-center justify-center mx-auto mb-4 shadow-[0_0_30px_rgba(212,175,55,0.3)]"
+              className="relative size-20 rounded-full bg-gradient-to-br from-primary to-yellow-600 flex items-center justify-center mx-auto mb-4 shadow-[0_0_30px_rgba(212,175,55,0.3)] group cursor-pointer"
+              onClick={() => setShowLogoSettings(!showLogoSettings)}
             >
-              <Coins className="size-8 text-black" />
+              {logo ? (
+                <img src={logo} alt="Logo" className="size-full rounded-full object-cover" />
+              ) : (
+                <Coins className="size-9 text-black" />
+              )}
+              <div className="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <Camera className="size-5 text-white" />
+              </div>
             </motion.div>
 
             <h1 className="text-2xl font-bold text-white tracking-tight">
@@ -83,6 +132,52 @@ export default function Login({ onLogin }: LoginProps) {
             <p className="text-xs text-zinc-600 mt-1">
               Ingresa tu contraseña para acceder al generador de calendarios
             </p>
+
+            {/* Logo Settings Popover */}
+            <AnimatePresence>
+              {showLogoSettings && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute top-24 left-1/2 -translate-x-1/2 bg-zinc-900 border border-white/10 rounded-xl p-4 shadow-2xl z-20 min-w-[240px]"
+                >
+                  <div className="flex flex-col gap-2">
+                    <p className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider text-center">Logo del Casino</p>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => logoInputRef.current?.click()}
+                        className="flex-1 border-white/10 h-8 text-[11px]"
+                      >
+                        <Upload className="size-3 mr-1.5" />
+                        Subir Logo
+                      </Button>
+                      {logo && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={handleRemoveLogo}
+                          className="border-red-500/20 text-red-400 hover:bg-red-500/10 h-8"
+                        >
+                          <Trash2 className="size-3" />
+                        </Button>
+                      )}
+                    </div>
+                    <input
+                      ref={logoInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleLogoUpload}
+                      className="hidden"
+                    />
+                    <p className="text-[9px] text-zinc-600 text-center">PNG, JPG o SVG recomendado (500x500px)</p>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           {/* Form */}
