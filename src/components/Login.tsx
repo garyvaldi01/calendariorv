@@ -131,6 +131,7 @@ export default function Login({ onLogin }: LoginProps) {
                 src={logo || "/logo.png"} 
                 alt="Logo Casino Club RV" 
                 className="size-full rounded-full object-cover" 
+                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
               />
               <div className="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                 <Camera className="size-5 text-white" />
