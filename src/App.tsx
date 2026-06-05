@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 import { generateCalendar, analyzePreviousCalendars, improveInstagramPost, extractInstagramComments } from '@/lib/gemini';
 import { parseCommentsFromTextClientSide } from '@/lib/localParser';
 import { WeeklyCalendar, SavedCalendar, AnalysisReport, InstagramImprovementReport, InstagramComment, InstagramExtractorResult } from '@/types';
-import { Sparkles, UploadCloud, Download, Rocket, Settings, Coins, PenTool, LayoutGrid, FileText, X, Instagram, FileDown, History, TrendingUp, Check, Bot, RefreshCw, Layers, Sparkle, Link, MessageSquare, Trophy, Copy, CheckSquare, Search, Filter, AlertTriangle } from 'lucide-react';
+import { Sparkles, UploadCloud, Download, Rocket, Settings, PenTool, LayoutGrid, FileText, X, Instagram, FileDown, History, TrendingUp, Check, Bot, RefreshCw, Layers, Sparkle, Link, MessageSquare, Trophy, Copy, CheckSquare, Search, Filter, AlertTriangle } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import { motion, AnimatePresence } from 'motion/react';
 import confetti from 'canvas-confetti';
@@ -28,6 +28,7 @@ export default function App() {
   const [showConfig, setShowConfig] = useState(false);
   const [customKey, setCustomKey] = useState('');
   const [language, setLanguage] = useState<Language>('es');
+  const [headerLogo, setHeaderLogo] = useState<string | null>(() => localStorage.getItem('clubrv_logo'));
   
   const [activeTab, setActiveTab] = useState<'calendar' | 'recommendations' | 'instagram-audit' | 'instagram-comments'>('calendar');
   const [analysis, setAnalysis] = useState<AnalysisReport | null>(null);
@@ -632,8 +633,8 @@ export default function App() {
       <header className="border-b border-white/5 bg-black/40 backdrop-blur-md sticky top-0 z-50 print:hidden">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="size-8 rounded bg-gradient-to-br from-primary to-yellow-600 flex items-center justify-center text-black font-bold">
-              <Coins className="size-5" />
+            <div className="size-10 rounded-full bg-gradient-to-br from-primary to-yellow-600 flex items-center justify-center shadow-[0_0_10px_rgba(212,175,55,0.3)] overflow-hidden shrink-0">
+              <img src={headerLogo || "/logo.png"} alt="Casino Club RV" className="size-full object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }} />
             </div>
             <h1 className="font-bold text-xl tracking-tight text-white flex items-center gap-2">
               Casino Club <span className="text-primary">RV</span>
@@ -675,7 +676,7 @@ export default function App() {
         <div id="report-content" className="print:block print:w-full">
            <div className="hidden print:block mb-8 text-center pb-4 border-b border-gray-200">
              <h1 className="text-3xl font-bold text-black flex items-center justify-center gap-2">
-               <Coins className="size-8" /> Casino Club RV
+               <img src={headerLogo || "/logo.png"} alt="Casino Club RV" className="inline-block h-8 w-8 rounded-full object-cover align-middle" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }} /> Casino Club RV
              </h1>
              <p className="text-gray-500 mt-2 font-medium">Planificación Semanal Optimizado para Instagram (Dossier de Diseño)</p>
            </div>
