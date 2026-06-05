@@ -23,6 +23,20 @@ export default function Login({ onLogin }: LoginProps) {
     }
   }, []);
 
+  // Close popover when clicking outside
+  useEffect(() => {
+    if (!showLogoSettings) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('.logo-settings-area')) {
+        setShowLogoSettings(false);
+      }
+    };
+    // Delay to prevent the same click that opened it from closing it
+    setTimeout(() => document.addEventListener('click', handleClickOutside), 0);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [showLogoSettings]);
+
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
@@ -110,7 +124,7 @@ export default function Login({ onLogin }: LoginProps) {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-              className="relative size-20 rounded-full bg-gradient-to-br from-primary to-yellow-600 flex items-center justify-center mx-auto mb-4 shadow-[0_0_30px_rgba(212,175,55,0.3)] group cursor-pointer"
+              className="relative size-20 rounded-full bg-gradient-to-br from-primary to-yellow-600 flex items-center justify-center mx-auto mb-4 shadow-[0_0_30px_rgba(212,175,55,0.3)] group cursor-pointer logo-settings-area"
               onClick={() => setShowLogoSettings(!showLogoSettings)}
             >
               {logo ? (
@@ -141,7 +155,7 @@ export default function Login({ onLogin }: LoginProps) {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -10, scale: 0.95 }}
                   transition={{ duration: 0.15 }}
-                  className="absolute top-24 left-1/2 -translate-x-1/2 bg-zinc-900 border border-white/10 rounded-xl p-4 shadow-2xl z-20 min-w-[240px]"
+                  className="absolute top-24 left-1/2 -translate-x-1/2 bg-zinc-900 border border-white/10 rounded-xl p-4 shadow-2xl z-20 min-w-[240px] logo-settings-area"
                 >
                   <div className="flex flex-col gap-2">
                     <p className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider text-center">Logo del Casino</p>
